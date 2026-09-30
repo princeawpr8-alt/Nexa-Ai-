@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nexa AI</title>
+<style>
+:root{--bg:#0b0e14;--panel:#121722;--panel2:#181e2a;--line:#2a3240;--text:#f5f7fb;--muted:#9aa5b5;--accent:#7c5cff;--accent2:#20c997}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+button,input,textarea{font:inherit}button{cursor:pointer}.app{min-height:100vh;display:flex}
+.sidebar{width:270px;background:var(--panel);border-right:1px solid var(--line);padding:18px;display:flex;flex-direction:column;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-size:23px;font-weight:800}.logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center}
+.new{padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--panel2);color:var(--text);text-align:left}.new:hover,.history button:hover{background:#222a38}
+.history{flex:1;overflow:auto}.history h4{color:var(--muted);font-size:12px;margin:8px 5px}.history button{width:100%;padding:10px;border:0;background:transparent;color:#c9d0dc;text-align:left;border-radius:9px;margin-bottom:3px}
+.sidebottom{border-top:1px solid var(--line);padding-top:10px}.sidebottom button{width:100%;padding:10px;border:0;background:transparent;color:#c9d0dc;text-align:left;border-radius:9px}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}.top{height:64px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 20px}.status{font-size:11px;background:#17372f;color:#68e1ba;border-radius:99px;padding:4px 8px;margin-left:7px}
+.messages{flex:1;overflow:auto;padding:28px max(18px,calc((100% - 860px)/2));display:flex;flex-direction:column;gap:22px}
+.welcome{text-align:center;margin:auto;max-width:720px}.welcome h1{font-size:36px;margin:0 0 8px}.welcome p{color:var(--muted)}.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:24px}.quick button{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px;text-align:left;color:var(--text)}.quick small{display:block;color:var(--muted);margin-top:5px}
+.msg{display:flex;gap:12px}.avatar{width:34px;height:34px;flex:0 0 34px;border-radius:50%;display:grid;place-items:center;background:#293140}.ai .avatar{background:linear-gradient(135deg,var(--accent),var(--accent2))}.bubble{max-width:760px;line-height:1.55;white-space:pre-wrap}.typing{color:var(--muted)}
+.composer{border-top:1px solid var(--line);padding:14px max(18px,calc((100% - 860px)/2));background:#0d1118}.tools{display:flex;gap:7px;margin-bottom:8px}.tool{border:1px solid var(--line);background:var(--panel2);color:#c9d0dc;border-radius:9px;padding:7px 10px}.box{display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:8px}.box textarea{flex:1;min-height:44px;max-height:150px;resize:none;border:0;outline:0;background:transparent;color:var(--text);padding:9px}.send{width:44px;height:44px;border:0;border-radius:12px;background:#fff;color:#111;font-weight:800}.note{font-size:11px;color:#687383;text-align:center;margin-top:7px}
+.modal{position:fixed;inset:0;background:#0009;display:none;place-items:center;padding:20px}.modal.show{display:grid}.modalbox{width:min(430px,100%);background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:20px}.modalbox h2{margin-top:0}.modalbox input{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--panel2);color:#fff;margin:6px 0 12px}.primary{width:100%;padding:11px;border:0;border-radius:10px;background:var(--accent);color:#fff;font-weight:700}.close{float:right;color:var(--muted);background:none;border:0}
+@media(max-width:720px){.sidebar{display:none}.quick{grid-template-columns:1fr}.welcome h1{font-size:28px}.top{padding:0 14px}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">✦</div>Nexa AI</div>
+  <button class="new" onclick="newChat()">＋ नई चैट</button>
+  <div class="history"><h4>चैट हिस्ट्री</h4><div id="history"></div></div>
+  <div class="sidebottom"><button onclick="openSettings()">⚙️ सेटिंग्स</button><button onclick="openLogin()">👤 लॉगिन / साइन अप</button></div>
+</aside>
+<main class="main">
+<header class="top"><b>Nexa AI <span class="status">ONLINE</span></b><button class="tool" onclick="openSettings()">⚙️</button></header>
+<section class="messages" id="messages">
+  <div class="welcome" id="welcome">
+    <h1>नमस्ते! मैं Nexa AI हूँ 👋</h1>
+    <p>सवाल पूछें, पढ़ाई करें, लिखें या अपने आइडिया पर काम करें।</p>
+    <div class="quick">
+      <button onclick="fill('मुझे एक Instagram bio लिखकर दो')">✍️ लेखन<small>Bio, caption और messages</small></button>
+      <button onclick="fill('मुझे यह गणित का सवाल समझाओ')">🧠 पढ़ाई<small>Concept और homework help</small></button>
+      <button onclick="fill('एक शानदार मोबाइल ऐप का आइडिया दो')">💡 आइडिया<small>Projects और planning</small></button>
+    </div>
+  </div>
+</section>
+<footer class="composer">
+  <div class="tools"><button class="tool" onclick="photo()">🖼️ फोटो</button><button class="tool" onclick="voice()">🎤 आवाज़</button><button class="tool" onclick="openSettings()">⚙️ सेटिंग्स</button></div>
+  <div class="box"><textarea id="input" placeholder="Nexa AI से कुछ भी पूछें..." onkeydown="key(event)"></textarea><button class="send" onclick="send()">➤</button></div>
+  <div class="note">Nexa AI डेमो • असली AI उत्तर के लिए सुरक्षित backend/API जोड़ना होगा</div>
+</footer>
+</main>
+</div>
+
+<div class="modal" id="modal"><div class="modalbox"><button class="close" onclick="closeModal()">✕</button><h2 id="modalTitle">सेटिंग्स</h2><div id="modalBody"></div></div></div>
+<input id="file" type="file" accept="image/*" hidden onchange="picked(this)">
+
+<script>
+const messages=document.getElementById('messages'), input=document.getElementById('input'), historyEl=document.getElementById('history');
+let chats=JSON.parse(localStorage.getItem('nexaChats')||'[]');
+function save(){localStorage.setItem('nexaChats',JSON.stringify(chats))}
+function renderHistory(){historyEl.innerHTML='';chats.slice(-15).reverse().forEach((c,i)=>{let b=document.createElement('button');b.textContent='💬 '+c.title;b.onclick=()=>loadChat(chats.length-1-i);historyEl.appendChild(b)})}
+function newChat(){messages.innerHTML='<div class="welcome" id="welcome"><h1>नई चैट शुरू करें</h1><p>नीचे अपना सवाल लिखें।</p></div>';input.value=''}
+function fill(t){input.value=t;input.focus()}
+function key(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send()}}
+function add(text,who){let d=document.createElement('div');d.className='msg '+who;d.innerHTML='<div class="avatar">'+(who==='user'?'U':'✦')+'</div><div class="bubble"></div>';d.querySelector('.bubble').textContent=text;messages.appendChild(d);messages.scrollTop=messages.scrollHeight}
+function send(){
+ let t=input.value.trim();if(!t)return;let w=document.getElementById('welcome');if(w)w.remove();
+ add(t,'user');input.value='';
+ let c={title:t.slice(0,32),user:t,answer:'मैं Nexa AI का डेमो हूँ। आपका संदेश सही तरीके से प्राप्त हुआ। असली AI उत्तर देने के लिए backend और AI API जोड़ना बाकी है।'};chats.push(c);save();renderHistory();
+ setTimeout(()=>add(c.answer,'ai'),400)
+}
+function loadChat(i){let c=chats[i];messages.innerHTML='';add(c.user,'user');add(c.answer,'ai')}
+function openSettings(){show('सेटिंग्स','<p style="color:#9aa5b5">यहाँ भविष्य में मॉडल, भाषा, थीम और नोटिफिकेशन की सेटिंग्स जोड़ी जा सकती हैं।</p><button class="primary" onclick="closeModal()">ठीक है</button>')}
+function openLogin(){show('Nexa AI अकाउंट','<label>ईमेल</label><input placeholder="आपका ईमेल"><label>पासवर्ड</label><input type="password" placeholder="पासवर्ड"><button class="primary" onclick="alert(\\'डेमो: असली लॉगिन के लिए सुरक्षित backend चाहिए।\\');closeModal()">जारी रखें</button>')}
+function show(t,b){document.getElementById('modalTitle').textContent=t;document.getElementById('modalBody').innerHTML=b;document.getElementById('modal').classList.add('show')}
+function closeModal(){document.getElementById('modal').classList.remove('show')}
+function photo(){document.getElementById('file').click()}
+function picked(el){if(el.files[0]){input.value='इस फोटो के बारे में बताइए: '+el.files[0].name;input.focus()}}
+function voice(){if(!('webkitSpeechRecognition'in window||'SpeechRecognition'in window)){alert('इस ब्राउज़र में voice input उपलब्ध नहीं है।');return}let R=window.SpeechRecognition||window.webkitSpeechRecognition,r=new R();r.lang='hi-IN';r.onresult=e=>{input.value=e.results[0][0].transcript};r.start()}
+renderHistory();
+</script>
+</body>
+</html>
